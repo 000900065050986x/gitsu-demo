@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GitSU</title>
+<style>
+:root{--bg:#0c1016;--bar:#141a22;--chip:#1c232e;--ink:#e6edf5;--muted:#8b95a6;--line:#2a3340;--accent:#4ec3d4;--ok:#7dcea0}
+*{box-sizing:border-box}html,body,#app{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.top{padding:8px}.bar{display:grid;grid-template-columns:36px 1fr auto;gap:8px;padding:8px;background:var(--bar);border:1px solid var(--line);border-radius:12px}
+.logo{width:36px;height:36px;border-radius:10px;border:1px dashed var(--line);background:#1a1630;color:#c4b4ff;font-size:18px}
+.pairs{display:grid;grid-template-columns:repeat(3,max-content);gap:6px}
+.tab{position:relative}.tabb{height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--chip);font-size:12px}
+.tabb.on{background:#0d1117;box-shadow:inset 0 -2px 0 var(--accent)}
+.right{display:flex;gap:6px;align-items:center}
+.search,.iconbtn,.avatar{height:30px;border:1px solid var(--line);background:#0d1117;border-radius:8px;padding:0 8px;color:var(--muted);font-size:12px}
+.avatar,.iconbtn{width:30px;border-radius:50%;padding:0;display:grid;place-items:center}
+.dd{position:absolute;top:36px;left:0;min-width:190px;background:#1b222c;border:1px solid var(--line);border-radius:10px;padding:4px;z-index:50}
+.dd button{display:block;width:100%;text-align:left;background:none;border:0;padding:7px 8px;border-radius:6px;font-size:12px}
+.work{height:calc(100% - 120px);overflow:auto;padding:8px 12px 8px 28px}
+.k{color:var(--muted);font-size:12px}
+.rowbtns button{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:0 6px 6px 0;font-size:12px}
+.tree button{background:none;border:0;padding:4px;display:block}
+.ed{width:100%;height:55%;background:#0b0e13;border:0;color:#d7deea;padding:12px;font:13px ui-monospace,monospace}
+.scrim{position:fixed;inset:0;background:#0005;z-index:80}
+.edge{position:fixed;left:0;top:0;bottom:40px;width:min(250px,82vw);background:#171c24;z-index:81;padding:12px;border-right:1px solid var(--line)}
+.edge button{display:block;width:100%;text-align:left;background:none;border:0;padding:8px 4px}
+.handle{position:fixed;left:0;top:40%;z-index:82;width:64px;height:30px;border:0;border-radius:16px;background:#121212;color:#d4b45a;box-shadow:0 0 12px #b08a3a77}
+.tools{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);width:min(280px,90vw);background:#1c222c;border:1px solid var(--line);border-radius:14px;padding:8px;z-index:91}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.grid button{background:#12161c;border:1px solid var(--line);border-radius:10px;min-height:54px;font-size:11px}
+.fab{position:fixed;right:12px;bottom:42px;width:46px;height:46px;border-radius:50%;border:2px solid #8d7bff;background:#1a1630;color:#c4b4ff;z-index:100;font-size:18px}
+.status{display:flex;gap:6px;flex-wrap:wrap;padding:6px 10px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted)}
+.ok{color:var(--ok)}
+.boot{position:fixed;inset:0;background:#cfcfcf;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:200;color:#222;letter-spacing:.3em}
+</style></head>
+<body><div id="app"></div>
+<script>
+(function(){
+var TABS=[["files","Files"],["code","Code"],["kit","Kit AI"],["git","Git"],["terminal","Terminal"],["share","Share"]];
+var MENUS={files:["Open folder…","New file","New window","Save all"],code:["Open editor","Go to file","Format document","Command palette"],kit:["New chat","Agents","Add context","History"],git:["Status","Commit…","Push / Pull","Branches"],terminal:["New terminal","Clear","Kill session"],share:["Copy link","Export project"]};
+var FILES=["README.md","Cargo.toml","src/main.rs","src/vault.rs"];
+var S={boot:1,screen:"files",menu:null,edge:0,tools:0,page:"ws"};
+function paint(){
+  if(S.boot){document.getElementById("app").innerHTML='<div class="boot"><div style="font-size:64px">🦊</div><p>GITSU</p></div>';return;}
+  var h='<div class="top"><div class="bar"><button class="logo" data-a="boot">🦊</button><div class="pairs">';
+  TABS.forEach(function(t){
+    h+='<div class="tab"><button class="tabb '+(S.screen===t[0]?"on":"")+'" data-a="tab" data-v="'+t[0]+'">'+t[1]+'</button>';
+    if(S.menu===t[0]){h+='<div class="dd" data-keep="1">';MENUS[t[0]].forEach(function(m){h+='<button data-a="item" data-v="'+m+'">'+m+'</button>';});h+='</div>';}
+    h+='</div>';
+  });
+  h+='</div><div class="right"><button class="search" data-a="find">⌕ ⌘K</button><button class="iconbtn" data-a="find">🔔</button><button class="avatar" data-a="go" data-v="account">TJ</button></div></div></div>';
+  h+='<div class="work">';
+  if(S.page==="settings") h+='<h2>Settings</h2><p class="k">Display · Themes · Icons · MCP. App menu also opens this.</p>';
+  else if(S.page==="account") h+='<h2>Account</h2><p>Thomas James · thomas@local</p><p class="k">Logout lives only here.</p>';
+  else if(S.screen==="files"){h+='<h2>aurora-sync</h2><p class="k">Your private vault</p><input placeholder="Find a file…" style="width:100%;background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:8px;margin:8px 0"><div class="rowbtns"><button>Choose files</button><button>Whole project</button><button data-a="tab" data-v="share">Share…</button></div>';FILES.forEach(function(f){h+='<div><button data-a="open">📄 '+f+'</button></div>';});}
+  else if(S.screen==="code") h+='<p class="k">aurora-sync/src/main.rs</p><textarea class="ed">fn main() {\n    println!("GitSU · KiT the Branchfox");\n}\n</textarea>';
+  else if(S.screen==="kit") h+='<p class="k">KiT</p><p>I\'ll take this as lead. Plan: research → code → review → test.</p><div class="rowbtns"><button>Plan then code this file</button><button>Hand this to Researcher then Coder</button></div><p><input placeholder="Tell KiT what you want…" style="width:70%;background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:8px"> <button style="background:#2d7dff;border:0;border-radius:8px;padding:8px 12px">Send</button></p>';
+  else if(S.screen==="git") h+='<h2>Git</h2><p class="k">aurora-sync · main · GitHub not signed in</p><p>working tree clean</p>';
+  else if(S.screen==="terminal") h+='<p class="k">fox ›</p><textarea class="ed" readonly>GitSU terminal — type help.\nfox ›</textarea>';
+  else h+='<h2>Share</h2><p class="k">Scoped share. Import off until GitHub sign-in.</p>';
+  h+='</div>';
+  if(S.edge) h+='<div class="scrim" data-a="x"></div><aside class="edge"><p class="k">Swipe any edge · drag the tab</p><h3>App menu</h3><button data-a="go" data-v="account">Account</button><button data-a="go" data-v="settings">Settings</button><button data-a="go" data-v="settings">Display</button><button data-a="go" data-v="settings">Icons</button><button data-a="go" data-v="settings">GitHub</button></aside>';
+  if(S.tools) h+='<div class="scrim" data-a="x"></div><div class="tools"><div class="k" style="text-align:center;letter-spacing:.2em">CODING TOOLS</div><div class="grid"><button data-a="tool" data-v="code">New file</button><button>Save</button><button data-a="find">Find</button><button data-a="tab" data-v="terminal">Terminal</button><button data-a="tab" data-v="kit">KiT</button><button data-a="tab" data-v="git">Commit</button><button>Wrap</button><button>Format</button><button data-a="tab" data-v="terminal">Run file</button></div></div>';
+  h+='<button class="handle" data-a="edge">▣</button><button class="fab" data-a="fab">🦊</button>';
+  h+='<div class="status"><span class="pill ok">On this device</span><span class="pill">Thomas Ross</span><span class="pill">GitHub not signed in</span><span class="pill">MCP off</span></div>';
+  document.getElementById("app").innerHTML=h;
+}
+document.getElementById("app").onclick=function(e){
+  var b=e.target.closest("[data-a]");
+  if(!b){ if(!e.target.closest("[data-keep]")){S.menu=null;S.edge=0;S.tools=0;paint();} return; }
+  var a=b.getAttribute("data-a"),v=b.getAttribute("data-v");
+  if(a==="tab"){S.menu=(S.menu===v)?null:v;S.screen=v;S.page="ws";S.tools=0;S.edge=0;}
+  if(a==="item"||a==="open"){S.menu=null;S.screen="code";S.page="ws";}
+  if(a==="fab"){S.tools=!S.tools;S.menu=null;S.edge=0;}
+  if(a==="edge"){S.edge=!S.edge;S.menu=null;S.tools=0;}
+  if(a==="x"){S.edge=0;S.tools=0;S.menu=null;}
+  if(a==="go"){S.page=v;S.edge=0;S.menu=null;}
+  if(a==="boot"){S.boot=1;paint();setTimeout(function(){S.boot=0;paint();},800);return;}
+  if(a==="find"){S.screen="files";S.page="ws";S.tools=0;}
+  if(a==="tool"){S.tools=0;S.screen=v||"code";S.page="ws";}
+  paint();
+};
+setTimeout(function(){S.boot=0;paint();},1200);paint();
+})();
+</script></body></html>
