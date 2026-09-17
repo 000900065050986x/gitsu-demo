@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0c1016"/>
+<title>GitSU · KiT the Branchfox</title>
+<style>
+:root{
+  --bg:#0c1016;--bar:#141a22;--chip:#1c232e;--ink:#e6edf5;--muted:#8b95a6;
+  --line:#2a3340;--accent:#4ec3d4;--ok:#7dcea0;--warn:#e2b15a;--fox:#c4b4ff;
+  --fox-bg:#1a1630;--edge:#d4b45a;--danger:#e07a7a;--kit:#2d7dff;
+}
+html[data-theme="dawn"]{
+  --bg:#f4efe6;--bar:#fffaf3;--chip:#efe6d6;--ink:#2a241c;--muted:#7a6e5e;
+  --line:#d9ccb6;--accent:#c45c26;--ok:#2f7a4a;--warn:#a06b12;--fox:#6b4aa8;
+  --fox-bg:#efe6ff;--edge:#b08a3a;--danger:#b44;--kit:#1d5ad6;
+}
+html[data-theme="forest"]{
+  --bg:#0d1410;--bar:#142019;--chip:#1b2a22;--ink:#e4f0e7;--muted:#8aa394;
+  --line:#2a3c32;--accent:#6fd4a0;--ok:#8ee0b0;--warn:#e2c15a;--fox:#9ad4b0;
+  --fox-bg:#16301f;--edge:#c9b15a;--danger:#e07a7a;--kit:#3d9a6a;
+}
+*{box-sizing:border-box}
+html,body,#app{height:100%;margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,sans-serif;overflow:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{display:flex;flex-direction:column;height:100%}
+.top{padding:8px 8px 0}
+.bar{display:grid;grid-template-columns:40px 1fr auto;gap:8px;padding:8px;
+  background:var(--bar);border:1px solid var(--line);border-radius:14px;align-items:start}
+.logo{width:36px;height:36px;border-radius:10px;border:1px dashed var(--line);
+  background:var(--fox-bg);color:var(--fox);font-size:18px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{position:relative}
+.tabb{height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line);
+  background:var(--chip);font-size:12px}
+.tabb.on{background:#0d1117;box-shadow:inset 0 -2px 0 var(--accent);color:var(--ink)}
+html[data-theme="dawn"] .tabb.on{background:#fff}
+.right{display:flex;gap:6px;align-items:center}
+.search,.iconbtn,.avatar{height:30px;border:1px solid var(--line);background:#0d1117;
+  border-radius:8px;padding:0 8px;color:var(--muted);font-size:12px}
+html[data-theme="dawn"] .search,html[data-theme="dawn"] .iconbtn,html[data-theme="dawn"] .avatar{background:#fff}
+.avatar,.iconbtn{width:30px;border-radius:50%;padding:0;display:grid;place-items:center}
+.dd{position:absolute;top:36px;left:0;min-width:200px;background:#1b222c;border:1px solid var(--line);
+  border-radius:10px;padding:4px;z-index:50;box-shadow:0 10px 30px #0006}
+html[data-theme="dawn"] .dd{background:#fffaf3}
+.dd button{display:block;width:100%;text-align:left;background:none;border:0;padding:8px 10px;border-radius:6px;font-size:12px}
+.dd button:hover{background:#ffffff12}
+.work{flex:1;overflow:auto;padding:10px 12px 92px 28px}
+h2{margin:4px 0 8px;font-size:20px}
+.k{color:var(--muted);font-size:12px}
+.rowbtns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.rowbtns button,.btn{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:12px}
+.btn.primary{background:var(--kit);border-color:transparent;color:#fff}
+.tree{margin-top:8px}
+.tree button{background:none;border:0;padding:6px 4px;display:flex;gap:8px;align-items:center;width:100%;text-align:left;border-radius:8px}
+.tree button:hover,.tree button.on{background:#ffffff0d}
+.ed{width:100%;min-height:48%;height:48%;background:#0b0e13;border:1px solid var(--line);border-radius:10px;
+  color:#d7deea;padding:12px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+html[data-theme="dawn"] .ed{background:#fff;color:#2a241c}
+.chat{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.bubble{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-size:13px;line-height:1.45}
+.bubble.kit{border-color:#4ec3d455}
+.composer{display:flex;gap:8px;align-items:center}
+.composer input{flex:1;background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:10px}
+.scrim{position:fixed;inset:0;background:#0006;z-index:80}
+.edge{position:fixed;left:0;top:0;bottom:44px;width:min(260px,84vw);background:#171c24;z-index:81;
+  padding:16px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+html[data-theme="dawn"] .edge{background:#fffaf3}
+.edge h3{margin:8px 0}
+.edge button{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 6px;border-radius:8px}
+.edge button:hover{background:#ffffff10}
+.handle{position:fixed;left:0;top:42%;z-index:82;width:22px;height:56px;border:0;border-radius:0 14px 14px 0;
+  background:#121212;color:var(--edge);box-shadow:0 0 14px #b08a3a66;font-size:11px;letter-spacing:.04em}
+.handle.gold{width:64px;height:30px;border-radius:0 16px 16px 0;top:40%}
+.tools{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);width:min(300px,92vw);
+  background:#1c222c;border:1px solid var(--line);border-radius:16px;padding:10px;z-index:91}
+html[data-theme="dawn"] .tools{background:#fffaf3}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.grid button{background:#12161c;border:1px solid var(--line);border-radius:10px;min-height:58px;font-size:11px}
+html[data-theme="dawn"] .grid button{background:#fff}
+.fab{position:fixed;right:12px;bottom:46px;width:48px;height:48px;border-radius:50%;
+  border:2px solid #8d7bff;background:var(--fox-bg);color:var(--fox);z-index:100;font-size:20px}
+.status{display:flex;gap:6px;flex-wrap:wrap;padding:6px 10px 10px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted)}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+.boot{position:fixed;inset:0;background:linear-gradient(#d8d4ce,#c8c4be);display:flex;align-items:center;
+  justify-content:center;flex-direction:column;z-index:200;color:#222;animation:fade .3s ease}
+.boot pre{font:11px/1.15 ui-monospace,monospace;margin:0;color:#2a241c}
+.boot .title{letter-spacing:.42em;margin-top:14px;font-size:13px}
+.boot .sub{letter-spacing:.18em;color:#555;font-size:11px;margin-top:6px}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.icons{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 0}
+.icons button{height:42px;border-radius:10px;border:1px solid var(--line);background:var(--chip);font-size:18px}
+.icons button.on{box-shadow:inset 0 0 0 2px var(--accent)}
+.term{white-space:pre-wrap}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#12161c;border:1px solid var(--line);
+  border-radius:999px;padding:8px 14px;font-size:12px;z-index:120}
+.badge{font-size:10px;color:var(--muted);margin-left:auto}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="./gitsu.js"></script>
+</body>
+</html>
